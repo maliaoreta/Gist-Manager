@@ -1,18 +1,33 @@
 'use strict'
 
-var fakeGists = [
-  {id: 1, name: 'Angular notes', body: 'yay angular blah blah'},
-  {id: 2, name: 'React notes', body: 'yay eact blah blah'},
-  {id: 3, name: 'JavaScript notes', body: 'yay JavaScript blah blah'},
-  {id: 4, name: 'Java notes', body: 'yay java blah blah'}
-]
-
 const GistDisplayPage = React.createClass({
+  getInitialState: function () {
+    return {
+      gistListData: []
+    };
+  },
+  loadDataFromGithub: function () {
+    $.ajax({
+      url: this.props.publicGistsUrl,
+      dataType: 'json',
+      cache: false,
+      success: function (data) {
+        // console.log('data: ', data);
+        this.setState({gistListData: data})
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.publicGistsUrl, status, err.toString());
+      }.bind(this)
+    })
+  },
+  componentDidMount: function () {
+    this.loadDataFromGithub();
+  },
   render: function () {
     return (
       <div className='gistDisplayPage'>
         <h1>Gist Manager</h1>
-        <GistList gists={this.props.fakeGists} />
+        <GistList gistListData={this.state.gistListData} />
       </div>
     )
   } 
@@ -20,11 +35,10 @@ const GistDisplayPage = React.createClass({
 
 const GistList = React.createClass({
   render: function () {
-    var gistListNode = this.props.gists.map(function (gist) {
+    var gistListNode = this.props.gistListData.map(function (gist) {
       return (
         <GistItem key={gist.id}
-          name={gist.name}
-          body={gist.body}
+          description={gist.description}
         />
       )
     });
@@ -41,8 +55,7 @@ const GistItem = React.createClass({
   render: function () {
     return (
       <div className="gistItems">
-        <h3>{this.props.name}</h3>
-        <h4>{this.props.body}</h4>
+        <h4>{this.props.description}</h4>
       </div>
     )
   }
@@ -50,7 +63,8 @@ const GistItem = React.createClass({
 
 ReactDOM.render(
   <GistDisplayPage 
-    fakeGists = {fakeGists}
+    publicGistsUrl = 'https://api.github.com/gists/public' 
   />,
   document.getElementById('content')
 );
+    // publicGistsUrl = 'https://gist.githubusercontent.com/anonymous/9d780ae1aa46b3dc2ac73e01c06f1962/raw/6e6dd58b2885f2de439490746b268716a6d46ecd/config.json'
