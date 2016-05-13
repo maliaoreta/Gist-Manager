@@ -1,49 +1,38 @@
 const react = require('react');
-const GistDisplayPage = require('./components/GistDisplayPage');
-// const Dashboard = require('./components/Dashboard');
+import { GistDisplayPage } from './components/GistDisplayPage';
 import { Dashboard } from './components/Dashboard';
 const querystring = require('qs');
+// import qs, * as querystring from 'qs';
 // const Router = ReactRouter.Router;
 // const Route = ReactRouter.Route;
 // const Link = ReactRouter.Link;
 // const IndexRoute = ReactRouter.IndexRoute;
 // const BrowserHistory = ReactRouter.browserHistory;
 
-function getUrlValues() {
-  var parsedURL = querystring.parse(window.location.search.substring(1));
-  var accessToken = parsedURL.accessToken;
-  var username = parsedURL.username;
+const { parsedAccessToken, parsedUsername } = querystring.parse(window.location.search.substring(1));
 
-  return {
-    accessToken: accessToken,
-    username: username
-  }
-}
-
-var accessToken = getUrlValues().accessToken;
-var username = getUrlValues().username;
-
-console.log('getUrlValues(): ', getUrlValues());
-var url = 'https://api.github.com/users/' + username + '/gists';
-
-if (accessToken) {
+if (parsedAccessToken) {
   localStorage.setItem('accessToken', accessToken);
-  // window.location.href = '/'; 
+}
+if (parsedUsername) {
+  localStorage.setItem('username', username);
 }
 
-if (localStorage.length > 0) { 
+const username = localStorage.getItem('username');
+const usersGistsUrl = `https://api.github.com/users/${username}/gists`;
+
+if (localStorage.length > 0) {
   ReactDOM.render(
     <GistDisplayPage
-      accessToken = {accessToken}
-      gistsUrl = {url}
+      accessToken = {localStorage.getItem('accessToken')}
+      gistsUrl = {usersGistsUrl}
     />
     ,document.getElementById('content')
-  )
+  );
 }
 else {
   ReactDOM.render(
     <Dashboard/>,
     document.getElementById('content')
-  )
+  );
 }
-

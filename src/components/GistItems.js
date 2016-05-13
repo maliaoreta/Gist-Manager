@@ -2,7 +2,7 @@ const GistItem = React.createClass({
   render: function () {
     return (
       <div className="gistItems">
-        <h4>{this.props.description}</h4>
+        <h4>Description: {this.props.description}</h4>
       </div>
     )
   }

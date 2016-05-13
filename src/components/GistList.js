@@ -14,6 +14,7 @@ const GistList = React.createClass({
 
     return (
       <div>
+        <h3>Your Gists</h3>
         {gistListNode}
       </div>
     )

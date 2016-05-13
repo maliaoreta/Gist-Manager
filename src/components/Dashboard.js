@@ -1,4 +1,4 @@
-const react = require('react');
+import { react } from 'react';
 
 export const Dashboard = React.createClass({
   render: function () {
@@ -7,6 +7,6 @@ export const Dashboard = React.createClass({
         <h1>Gist Manager</h1>
         <button><a href="/auth/github">Login</a></button> 
       </div>
-    )
+    );
   }
 });

@@ -1,8 +1,8 @@
-const react = require('react');
+import { react } from 'react';
 const GistList = require('./GistList');
 const $ = require('jquery');
 
-const GistDisplayPage = React.createClass({
+export const GistDisplayPage = React.createClass({
   getInitialState: function () {
     return {
       gistListData: []
@@ -30,10 +30,10 @@ const GistDisplayPage = React.createClass({
   render: function () {
     return (
       <div className='gistDisplayPage'>
+        <button><a href="/logout">Logout</a></button>
+        <h1>Gist Manager</h1>
         <GistList gistListData={this.state.gistListData} />
       </div>
     )
   } 
 });
-
-module.exports = GistDisplayPage;

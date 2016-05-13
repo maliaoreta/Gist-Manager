@@ -46,45 +46,40 @@
 
 	'use strict';
 	
-	var _Dashboard = __webpack_require__(1);
+	var _GistDisplayPage = __webpack_require__(1);
+	
+	var _Dashboard = __webpack_require__(37);
 	
 	var react = __webpack_require__(2);
-	var GistDisplayPage = __webpack_require__(34);
-	// const Dashboard = require('./components/Dashboard');
 	
 	var querystring = __webpack_require__(38);
+	// import qs, * as querystring from 'qs';
 	// const Router = ReactRouter.Router;
 	// const Route = ReactRouter.Route;
 	// const Link = ReactRouter.Link;
 	// const IndexRoute = ReactRouter.IndexRoute;
 	// const BrowserHistory = ReactRouter.browserHistory;
 	
-	function getUrlValues() {
-	  var parsedURL = querystring.parse(window.location.search.substring(1));
-	  var accessToken = parsedURL.accessToken;
-	  var username = parsedURL.username;
+	var _querystring$parse = querystring.parse(window.location.search.substring(1));
 	
-	  return {
-	    accessToken: accessToken,
-	    username: username
-	  };
-	}
+	var parsedAccessToken = _querystring$parse.parsedAccessToken;
+	var parsedUsername = _querystring$parse.parsedUsername;
 	
-	var accessToken = getUrlValues().accessToken;
-	var username = getUrlValues().username;
 	
-	console.log('getUrlValues(): ', getUrlValues());
-	var url = 'https://api.github.com/users/' + username + '/gists';
-	
-	if (accessToken) {
+	if (parsedAccessToken) {
 	  localStorage.setItem('accessToken', accessToken);
-	  // window.location.href = '/';
 	}
+	if (parsedUsername) {
+	  localStorage.setItem('username', username);
+	}
+	
+	var username = localStorage.getItem('username');
+	var usersGistsUrl = 'https://api.github.com/users/' + username + '/gists';
 	
 	if (localStorage.length > 0) {
-	  ReactDOM.render(React.createElement(GistDisplayPage, {
-	    accessToken: accessToken,
-	    gistsUrl: url
+	  ReactDOM.render(React.createElement(_GistDisplayPage.GistDisplayPage, {
+	    accessToken: localStorage.getItem('accessToken'),
+	    gistsUrl: usersGistsUrl
 	  }), document.getElementById('content'));
 	} else {
 	  ReactDOM.render(React.createElement(_Dashboard.Dashboard, null), document.getElementById('content'));
@@ -94,34 +89,64 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var react = __webpack_require__(2);
+	exports.GistDisplayPage = undefined;
 	
-	var Dashboard = exports.Dashboard = React.createClass({
-	  displayName: "Dashboard",
+	var _react = __webpack_require__(2);
 	
+	var GistList = __webpack_require__(34);
+	var $ = __webpack_require__(35);
+	
+	var GistDisplayPage = exports.GistDisplayPage = React.createClass({
+	  displayName: 'GistDisplayPage',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      gistListData: []
+	    };
+	  },
+	  loadDataFromGithub: function loadDataFromGithub() {
+	    $.ajax({
+	      url: this.props.gistsUrl,
+	      dataType: 'json',
+	      cache: false,
+	      beforeSend: function (xhr) {
+	        xhr.setRequestHeader('Authorization', 'token ' + this.props.accessToken);
+	      }.bind(this),
+	      success: function (data) {
+	        this.setState({ gistListData: data });
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        console.error(this.props.gistsUrl, status, err.toString());
+	      }.bind(this)
+	    });
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.loadDataFromGithub();
+	  },
 	  render: function render() {
 	    return React.createElement(
-	      "div",
-	      { className: "dashboard" },
+	      'div',
+	      { className: 'gistDisplayPage' },
 	      React.createElement(
-	        "h1",
-	        null,
-	        "Gist Manager"
-	      ),
-	      React.createElement(
-	        "button",
+	        'button',
 	        null,
 	        React.createElement(
-	          "a",
-	          { href: "/auth/github" },
-	          "Login"
+	          'a',
+	          { href: '/logout' },
+	          'Logout'
 	        )
-	      )
+	      ),
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Gist Manager'
+	      ),
+	      React.createElement(GistList, { gistListData: this.state.gistListData })
 	    );
 	  }
 	});
@@ -3763,56 +3788,8 @@
 	'use strict';
 	
 	var react = __webpack_require__(2);
-	var GistList = __webpack_require__(35);
-	var $ = __webpack_require__(36);
-	
-	var GistDisplayPage = React.createClass({
-	  displayName: 'GistDisplayPage',
-	
-	  getInitialState: function getInitialState() {
-	    return {
-	      gistListData: []
-	    };
-	  },
-	  loadDataFromGithub: function loadDataFromGithub() {
-	    $.ajax({
-	      url: this.props.gistsUrl,
-	      dataType: 'json',
-	      cache: false,
-	      beforeSend: function (xhr) {
-	        xhr.setRequestHeader('Authorization', 'token ' + this.props.accessToken);
-	      }.bind(this),
-	      success: function (data) {
-	        this.setState({ gistListData: data });
-	      }.bind(this),
-	      error: function (xhr, status, err) {
-	        console.error(this.props.gistsUrl, status, err.toString());
-	      }.bind(this)
-	    });
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.loadDataFromGithub();
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'gistDisplayPage' },
-	      React.createElement(GistList, { gistListData: this.state.gistListData })
-	    );
-	  }
-	});
-	
-	module.exports = GistDisplayPage;
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var react = __webpack_require__(2);
-	var $ = __webpack_require__(36);
-	var GistItem = __webpack_require__(37);
+	var $ = __webpack_require__(35);
+	var GistItem = __webpack_require__(36);
 	
 	var GistList = React.createClass({
 	  displayName: 'GistList',
@@ -3827,6 +3804,11 @@
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(
+	        'h3',
+	        null,
+	        'Your Gists'
+	      ),
 	      gistListNode
 	    );
 	  }
@@ -3835,7 +3817,7 @@
 	module.exports = GistList;
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -13683,7 +13665,7 @@
 
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13698,6 +13680,7 @@
 	      React.createElement(
 	        "h4",
 	        null,
+	        "Description: ",
 	        this.props.description
 	      )
 	    );
@@ -13705,6 +13688,44 @@
 	});
 	
 	module.exports = GistItem;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Dashboard = undefined;
+	
+	var _react = __webpack_require__(2);
+	
+	var Dashboard = exports.Dashboard = React.createClass({
+	  displayName: "Dashboard",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "div",
+	      { className: "dashboard" },
+	      React.createElement(
+	        "h1",
+	        null,
+	        "Gist Manager"
+	      ),
+	      React.createElement(
+	        "button",
+	        null,
+	        React.createElement(
+	          "a",
+	          { href: "/auth/github" },
+	          "Login"
+	        )
+	      )
+	    );
+	  }
+	});
 
 /***/ },
 /* 38 */
