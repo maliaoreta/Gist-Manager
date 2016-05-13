@@ -14,35 +14,59 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const GitHubStrategy = require('passport-github2').Strategy;
 const partials = require('express-partials');
-const CONFIG = require('./config/config.json')
+const CONFIG = require('./config/config.json');
+const path = require('path');
+const querystring = require('qs');
+const isAuthenticated = require('./middleware/isAuthenticated');
 
 passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
+passport.deserializeUser((user, done) => {
+  done(null, user);
 });
 
 passport.use(new GitHubStrategy({
   clientID: CONFIG.github_client_id,
-  clientSecret: CONFIG.github_secret_id,
-  callbackURL: "http://localhost:3000/"
+  clientSecret: CONFIG.github_client_secret,
+  callbackURL: "http://127.0.0.1:8080/auth/github/callback"
 },
 (accessToken, refreshToken, profile, done) => {
-  process.nextTick(() => {
-    return done(null, profile);
-  });
+  profile.accessToken = accessToken;
+  return done(null, profile);
 }
 ));
-
-app.
 
 app.use(partials());
 app.use(session({ secret: 'sdjflskdfj', resave: false, saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.listen(3000, () => {
-  console.log('Listening on 3000!');
+app.use(express.static(path.join(__dirname, 'public')));
+
+// app.get('/', (req, res) => {
+//   res.sendFile('/public/index.html', {
+//     root: __dirname
+//   });
+// });
+
+app.get('/auth/github',
+  passport.authenticate('github', { scope: [ 'user:email' ] }));
+
+app.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    var accessToken = querystring.stringify({accessToken:req.user.accessToken})
+    res.redirect('/?' + accessToken);
+  });
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+app.listen(8080, () => {
+  console.log('Listening on 8080!');
 });
