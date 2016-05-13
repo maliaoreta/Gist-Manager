@@ -52,13 +52,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // });
 
 app.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'user:email' ] }));
+  passport.authenticate('github', { scope: [ 'gists' ] }));
 
 app.get('/auth/github/callback', 
   passport.authenticate('github', { failureRedirect: '/login' }),
   function(req, res) {
-    // Successful authentication, redirect home.
-    var accessToken = querystring.stringify({accessToken:req.user.accessToken})
+    var accessToken = querystring.stringify({accessToken:req.user.accessToken, username:req.user._json.login})
     res.redirect('/?' + accessToken);
   });
 
@@ -70,3 +69,4 @@ app.get('/logout', (req, res) => {
 app.listen(8080, () => {
   console.log('Listening on 8080!');
 });
+

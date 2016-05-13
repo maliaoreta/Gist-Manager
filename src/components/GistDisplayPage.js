@@ -13,6 +13,9 @@ const GistDisplayPage = React.createClass({
       url: this.props.gistsUrl,
       dataType: 'json',
       cache: false,
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'token ' + this.props.accessToken);
+      }.bind(this),
       success: function (data) {
         this.setState({gistListData: data})
       }.bind(this),
@@ -27,7 +30,6 @@ const GistDisplayPage = React.createClass({
   render: function () {
     return (
       <div className='gistDisplayPage'>
-        <h1>Gist Manager</h1>
         <GistList gistListData={this.state.gistListData} />
       </div>
     )
