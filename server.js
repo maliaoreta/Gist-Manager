@@ -11,13 +11,13 @@ const express = require('express');
 const app = express();
 const passport = require('passport');
 const session = require('express-session');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const GitHubStrategy = require('passport-github2').Strategy;
 const partials = require('express-partials');
 const CONFIG = require('./config/config.json');
 const path = require('path');
 const querystring = require('qs');
-const isAuthenticated = require('./middleware/isAuthenticated');
+// const isAuthenticated = require('./middleware/isAuthenticated');
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // });
 
 app.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'gists' ] }));
+  passport.authenticate('github', { scope: [ 'gist', 'user' ] }));
 
 app.get('/auth/github/callback', 
   passport.authenticate('github', { failureRedirect: '/login' }),

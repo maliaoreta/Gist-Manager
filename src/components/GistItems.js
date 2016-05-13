@@ -1,4 +1,6 @@
-const GistItem = React.createClass({
+const React = require('react');
+
+export const GistItem = React.createClass({
   render: function () {
     return (
       <div className="gistItems">
@@ -7,6 +9,3 @@ const GistItem = React.createClass({
     )
   }
 })
-
-
-module.exports = GistItem;

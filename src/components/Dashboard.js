@@ -1,4 +1,4 @@
-import { react } from 'react';
+const React = require('react');
 
 export const Dashboard = React.createClass({
   render: function () {

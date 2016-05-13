@@ -1,8 +1,8 @@
-const react = require('react');
+const React = require('react');
 const $ = require('jquery');
-const GistItem = require('./GistItems');
+import { GistItem } from './GistItems';
 
-const GistList = React.createClass({
+export const GistList = React.createClass({
   render: function () {
     var gistListNode = this.props.gistListData.map(function (gist) {
       return (
@@ -20,5 +20,3 @@ const GistList = React.createClass({
     )
   }
 });
-
-module.exports = GistList;

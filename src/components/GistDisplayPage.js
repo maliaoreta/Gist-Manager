@@ -1,6 +1,23 @@
-import { react } from 'react';
-const GistList = require('./GistList');
+const React = require('react');
+import { GistList } from './GistList';
+import { Logout } from './Logout';
+import { CreateGist } from './CreateGist';
 const $ = require('jquery');
+const querystring = require('qs');
+
+const { accessToken, username } = querystring.parse(window.location.search.substring(1));
+
+if (accessToken) {
+  localStorage.setItem('accessToken', accessToken);
+}
+if (username) {
+  localStorage.setItem('username', username);
+  window.location = '/';
+}
+
+const userAccessToken = localStorage.getItem('accessToken');
+const gistUsername = localStorage.getItem('username');
+const usersGistsUrl = `https://api.github.com/users/${gistUsername}/gists`;
 
 export const GistDisplayPage = React.createClass({
   getInitialState: function () {
@@ -9,13 +26,16 @@ export const GistDisplayPage = React.createClass({
     };
   },
   loadDataFromGithub: function () {
+        console.log('userAccessToken: ', userAccessToken);
+        console.log('usersGistsUrl: ', usersGistsUrl);
     $.ajax({
-      url: this.props.gistsUrl,
+      url: usersGistsUrl,
       dataType: 'json',
       cache: false,
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader('Authorization', 'token ' + this.props.accessToken);
-      }.bind(this),
+      headers: {
+        Authorization: 'token ' + userAccessToken
+      },
+      method: 'GET',
       success: function (data) {
         this.setState({gistListData: data})
       }.bind(this),
@@ -30,8 +50,9 @@ export const GistDisplayPage = React.createClass({
   render: function () {
     return (
       <div className='gistDisplayPage'>
-        <button><a href="/logout">Logout</a></button>
         <h1>Gist Manager</h1>
+        <Logout />
+        <CreateGist />
         <GistList gistListData={this.state.gistListData} />
       </div>
     )
