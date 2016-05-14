@@ -6,8 +6,7 @@ export const GistList = React.createClass({
   render: function () {
     let that = this;
 
-    console.log('this.props.gistListData: ', this.props.gistListData);
-
+    console.log('this.props.contentData: ', this.props.contentData);
     var gistListNode = this.props.gistListData.map(function (gist) {
 
       let fileNames = Object.keys(gist.files).join(', ');

@@ -23,24 +23,56 @@ const usersGistsUrl = `https://api.github.com/users/${gistUsername}/gists`;
 export const GistDisplayPage = React.createClass({
   getInitialState: function () {
     return {
-      gistListData: []
+      gistListData: [],
+      contentData: []
     };
   },
   loadDataFromGithub: function () {
-    $.ajax({
-      url: usersGistsUrl,
-      dataType: 'json',
-      cache: false,
-      headers: {
-        Authorization: 'token ' + userAccessToken
-      },
-      method: 'GET',
-      success: function (data) {
-        this.setState({gistListData: data})
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.gistsUrl, status, err.toString());
-      }.bind(this)
+    this.helper().then((data) => {
+      data.forEach((gist) => {
+        this.loadGistContent(gist.url)
+        .then((data) => {
+          console.log('data: ', data);
+        })
+      })
+    })
+  },
+  helper: function () {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: usersGistsUrl,
+        dataType: 'json',
+        cache: false,
+        headers: {
+          'Authorization': `token ${userAccessToken}`
+        },
+        method: 'GET',
+        success: function (data) {     
+          resolve(data);
+        },
+        error: function (xhr, status, err) {
+          reject(err);
+        }
+      })
+    })
+  },
+  loadGistContent: function (gistContentUrl) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: gistContentUrl,
+        dataType: 'json',
+        cache: false,
+        headers: {
+          'Authorization': `token ${userAccessToken}`
+        },
+        method: 'GET',
+        success: function (data) {
+          resolve(data);
+        },
+        error: function (xhr, status, err) {
+          reject(err);
+        }
+      })
     })
   },
   deleteHandler: function (gistID) {
@@ -52,7 +84,6 @@ export const GistDisplayPage = React.createClass({
         'Authorization': `token ${localStorage.getItem('accessToken')}`
       },
       success: function () {
-        console.log('Success Delete!');
         this.loadDataFromGithub();
       }.bind(this),
       error: function (xhr, status, err) {
@@ -72,7 +103,6 @@ export const GistDisplayPage = React.createClass({
       },
       data: JSON.stringify(data),
       success: function (data) {
-        console.log('Success Create!');
         this.loadDataFromGithub();
       }.bind(this),
       error: function (xhr, status, err) {
@@ -89,7 +119,7 @@ export const GistDisplayPage = React.createClass({
         <h1>Gist Manager</h1>
         <Logout />
         <CreateGist createdGist={this.createdGist} />
-        <GistList gistListData={this.state.gistListData} deleteHandler={this.deleteHandler} />
+        <GistList gistListData={this.state.gistListData} contentData={this.state.contentData} deleteHandler={this.deleteHandler} />
       </div>
     )
   } 
