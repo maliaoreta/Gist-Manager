@@ -1,5 +1,6 @@
 const React = require('react');
 const $ = require('jquery');
+import { GistItem } from './GistItems';
 
 export const CreateGistForm = React.createClass({
   getInitialState() {

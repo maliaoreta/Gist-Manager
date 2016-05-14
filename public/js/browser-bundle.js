@@ -138,6 +138,22 @@
 	      }.bind(this)
 	    });
 	  },
+	  deleteHandler: function deleteHandler(gistID) {
+	    $.ajax({
+	      method: 'DELETE',
+	      url: 'https://api.github.com/gists/' + gistID,
+	      cache: false,
+	      headers: {
+	        'Authorization': 'token ' + localStorage.getItem('accessToken')
+	      },
+	      success: function () {
+	        console.log('Success!');
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        console.error(status, err.toString());
+	      }.bind(this)
+	    });
+	  },
 	  componentDidMount: function componentDidMount() {
 	    this.loadDataFromGithub();
 	  },
@@ -152,7 +168,7 @@
 	      ),
 	      React.createElement(_Logout.Logout, null),
 	      React.createElement(_CreateGist.CreateGist, null),
-	      React.createElement(_GistList.GistList, { gistListData: this.state.gistListData })
+	      React.createElement(_GistList.GistList, { gistListData: this.state.gistListData, deleteHandler: this.deleteHandler })
 	    );
 	  }
 	});
@@ -176,12 +192,14 @@
 	  displayName: 'GistList',
 	
 	  render: function render() {
+	    var that = this;
 	    var gistListNode = this.props.gistListData.map(function (gist) {
 	      return React.createElement(_GistItems.GistItem, { key: gist.id,
-	        description: gist.description
+	        id: gist.id,
+	        description: gist.description,
+	        deleteHandler: that.props.deleteHandler
 	      });
 	    });
-	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -199,25 +217,34 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	var React = __webpack_require__(4);
+	var $ = __webpack_require__(36);
 	
 	var GistItem = exports.GistItem = React.createClass({
-	  displayName: "GistItem",
+	  displayName: 'GistItem',
 	
+	  deleteHandler: function deleteHandler() {
+	    this.props.deleteHandler(this.props.id);
+	  },
 	  render: function render() {
 	    return React.createElement(
-	      "div",
-	      { className: "gistItems" },
+	      'div',
+	      { className: 'gistItems' },
 	      React.createElement(
-	        "h4",
+	        'h4',
 	        null,
-	        "Description: ",
+	        'Description: ',
 	        this.props.description
+	      ),
+	      React.createElement(
+	        'button',
+	        { onClick: this.deleteHandler },
+	        'Delete'
 	      )
 	    );
 	  }
@@ -13789,9 +13816,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.CreateGistForm = undefined;
+	
+	var _GistItems = __webpack_require__(3);
+	
 	var React = __webpack_require__(4);
 	var $ = __webpack_require__(36);
-	
 	var CreateGistForm = exports.CreateGistForm = React.createClass({
 	  displayName: 'CreateGistForm',
 	  getInitialState: function getInitialState() {

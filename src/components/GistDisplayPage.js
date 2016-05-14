@@ -43,6 +43,22 @@ export const GistDisplayPage = React.createClass({
       }.bind(this)
     })
   },
+  deleteHandler: function (gistID) {
+    $.ajax({
+      method: 'DELETE',
+      url: `https://api.github.com/gists/${gistID}`,
+      cache: false,
+      headers: {
+        'Authorization': `token ${localStorage.getItem('accessToken')}`
+      },
+      success: function () {
+        console.log('Success!');
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    })
+  },
   componentDidMount: function () {
     this.loadDataFromGithub();
   },
@@ -52,7 +68,7 @@ export const GistDisplayPage = React.createClass({
         <h1>Gist Manager</h1>
         <Logout />
         <CreateGist />
-        <GistList gistListData={this.state.gistListData} />
+        <GistList gistListData={this.state.gistListData} deleteHandler={this.deleteHandler} />
       </div>
     )
   } 
