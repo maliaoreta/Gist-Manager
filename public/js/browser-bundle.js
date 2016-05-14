@@ -214,6 +214,7 @@
 	
 	  render: function render() {
 	    var that = this;
+	    console.log('this.props.gistListData: ', this.props.gistListData);
 	    var gistListNode = this.props.gistListData.map(function (gist) {
 	      return React.createElement(_GistItems.GistItem, { key: gist.id,
 	        id: gist.id,
@@ -13812,6 +13813,10 @@
 	    this.setState({ createGistForm: true });
 	    this.setState({ createGistButton: false });
 	  },
+	  handleExit: function handleExit() {
+	    this.setState({ createGistForm: false });
+	    this.setState({ createGistButton: true });
+	  },
 	  render: function render() {
 	    var newGistButton = React.createElement(
 	      'button',
@@ -13822,7 +13827,7 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'createGist' },
-	      this.state.createGistForm ? React.createElement(_CreateGistForm.CreateGistForm, { createdGist: this.props.createdGist }) : null,
+	      this.state.createGistForm ? React.createElement(_CreateGistForm.CreateGistForm, { createdGist: this.props.createdGist, handleExit: this.handleExit }) : null,
 	      this.state.createGistButton ? newGistButton : null
 	    );
 	  }
@@ -13880,6 +13885,9 @@
 	    this.setState({ description: '', public: '', fileName: '', fileContent: '' });
 	    this.props.createdGist(data);
 	  },
+	  handleExit: function handleExit() {
+	    this.props.handleExit();
+	  },
 	  render: function render() {
 	    return React.createElement(
 	      'div',
@@ -13900,6 +13908,11 @@
 	          { type: 'submit' },
 	          'Submit'
 	        )
+	      ),
+	      React.createElement(
+	        'button',
+	        { onClick: this.handleExit },
+	        'Exit'
 	      )
 	    );
 	  }

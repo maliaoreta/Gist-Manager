@@ -7,7 +7,7 @@ export const CreateGistForm = React.createClass({
       description: '',
       public: '',
       fileName: '',
-      fileContent: ''    
+      fileContent: ''
     };
   },
   handleDescription: function (event) {
@@ -39,6 +39,9 @@ export const CreateGistForm = React.createClass({
     this.setState({description: '', public: '', fileName: '', fileContent: ''});
     this.props.createdGist(data);
   },
+  handleExit: function () {
+    this.props.handleExit();
+  },
   render: function () {
     return (
       <div className="createGistForm">
@@ -49,6 +52,7 @@ export const CreateGistForm = React.createClass({
           <input name="fileContent" placeholder="File Content" value={this.state.fileContent} onChange={this.handleFileContent} /><br/>
           <button type="submit">Submit</button>
         </form>
+        <button onClick={this.handleExit}>Exit</button>
       </div>
     )
   } 
