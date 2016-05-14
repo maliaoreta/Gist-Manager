@@ -4,6 +4,7 @@ import { Logout } from './Logout';
 import { CreateGist } from './CreateGist';
 const $ = require('jquery');
 const querystring = require('qs');
+import { Router, Route, IndexRoute, browserHistory as BrowserHistory} from 'react-router';
 
 const { accessToken, username } = querystring.parse(window.location.search.substring(1));
 
@@ -26,8 +27,6 @@ export const GistDisplayPage = React.createClass({
     };
   },
   loadDataFromGithub: function () {
-        console.log('userAccessToken: ', userAccessToken);
-        console.log('usersGistsUrl: ', usersGistsUrl);
     $.ajax({
       url: usersGistsUrl,
       dataType: 'json',
