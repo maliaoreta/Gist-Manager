@@ -13817,29 +13817,17 @@
 	  },
 	  handleSubmit: function handleSubmit(event) {
 	    event.preventDefault();
-	    var fileName = this.state.fileName;
+	
+	    var files = {};
+	    files[this.state.fileName] = {
+	      "content": this.state.fileContent
+	    };
 	
 	    var data = {
 	      "description": this.state.description,
-	      "public": this.state.public === 'true',
-	      "files": {
-	        "fileName.txt": {
-	          "content": this.state.fileContent
-	        }
-	      }
+	      "public": this.state.public,
+	      "files": files
 	    };
-	
-	    // const data = {
-	    //   "description": "ldskjfksldjfk",
-	    //   "public": true,
-	    //   "files": {     
-	    //     "fileName.txt": {
-	    //       "content": "sldf"
-	    //     }
-	    //   }
-	    // }
-	
-	    console.log('data: ', data);
 	
 	    $.ajax({
 	      method: 'POST',
@@ -13852,6 +13840,7 @@
 	      },
 	      data: JSON.stringify(data),
 	      success: function (data) {
+	        this.setState({ description: '', public: '', fileName: '', fileContent: '' });
 	        console.log('data: ', data);
 	      }.bind(this),
 	      error: function (xhr, status, err) {
