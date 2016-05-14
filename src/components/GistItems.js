@@ -9,7 +9,8 @@ export const GistItem = React.createClass({
     return (
       <div className="gistItems">
         <h4>Description: {this.props.description}</h4>
-        <button onClick={this.deleteHandler}>Delete</button>
+        <h5>Files: {this.props.fileNames}</h5>
+        <button onClick={this.deleteHandler}>Delete Gist</button>
       </div>
     )
   }

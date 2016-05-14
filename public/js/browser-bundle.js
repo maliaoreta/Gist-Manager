@@ -214,11 +214,17 @@
 	
 	  render: function render() {
 	    var that = this;
+	
 	    console.log('this.props.gistListData: ', this.props.gistListData);
+	
 	    var gistListNode = this.props.gistListData.map(function (gist) {
+	
+	      var fileNames = Object.keys(gist.files).join(', ');
+	
 	      return React.createElement(_GistItems.GistItem, { key: gist.id,
 	        id: gist.id,
 	        description: gist.description,
+	        fileNames: fileNames,
 	        deleteHandler: that.props.deleteHandler
 	      });
 	    });
@@ -226,7 +232,7 @@
 	      'div',
 	      null,
 	      React.createElement(
-	        'h3',
+	        'h2',
 	        null,
 	        'Your Gists'
 	      ),
@@ -264,9 +270,15 @@
 	        this.props.description
 	      ),
 	      React.createElement(
+	        'h5',
+	        null,
+	        'Files: ',
+	        this.props.fileNames
+	      ),
+	      React.createElement(
 	        'button',
 	        { onClick: this.deleteHandler },
-	        'Delete'
+	        'Delete Gist'
 	      )
 	    );
 	  }
