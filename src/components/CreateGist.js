@@ -17,8 +17,8 @@ export const CreateGist = React.createClass({
 
     return (
       <div className="createGist">
-        {this.state.createGistForm ? <CreateGistForm /> : null}
-        {this.state.createGistButton ? newGistButton : null}    
+        {this.state.createGistForm ? <CreateGistForm createdGist={this.props.createdGist} /> : null}
+        {this.state.createGistButton ? newGistButton : null}
       </div>
     )
   }

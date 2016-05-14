@@ -1,6 +1,5 @@
 const React = require('react');
 const $ = require('jquery');
-import { GistItem } from './GistItems';
 
 export const CreateGistForm = React.createClass({
   getInitialState() {
@@ -26,8 +25,8 @@ export const CreateGistForm = React.createClass({
   handleSubmit: function (event) {
     event.preventDefault();
 
-    var files = {};
-    files[this.state.fileName] = {
+    const files = {};
+    files[ this.state.fileName ] = {
           "content": this.state.fileContent
         }
 
@@ -37,24 +36,8 @@ export const CreateGistForm = React.createClass({
       "files": files
     }
 
-    $.ajax({
-      method: 'POST',
-      url: 'https://api.github.com/gists',
-      dataType: 'json',
-      cache: false,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'token ' + localStorage.getItem('accessToken')
-      },
-      data: JSON.stringify(data),
-      success: function (data) {
-        this.setState({description: '', public: '', fileName: '', fileContent: ''})
-        console.log('data: ', data);
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(xhr, status, err.toString());
-      }.bind(this)
-    })
+    this.setState({description: '', public: '', fileName: '', fileContent: ''});
+    this.props.createdGist(data);
   },
   render: function () {
     return (
@@ -69,4 +52,4 @@ export const CreateGistForm = React.createClass({
       </div>
     )
   } 
-});
+}); 

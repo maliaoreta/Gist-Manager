@@ -52,10 +52,31 @@ export const GistDisplayPage = React.createClass({
         'Authorization': `token ${localStorage.getItem('accessToken')}`
       },
       success: function () {
-        console.log('Success!');
+        console.log('Success Delete!');
+        this.loadDataFromGithub();
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(status, err.toString());
+      }.bind(this)
+    })
+  },
+  createdGist: function (data) {
+    $.ajax({
+      method: 'POST',
+      url: 'https://api.github.com/gists',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'token ' + localStorage.getItem('accessToken')
+      },
+      data: JSON.stringify(data),
+      success: function (data) {
+        console.log('Success Create!');
+        this.loadDataFromGithub();
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(xhr, status, err.toString());
       }.bind(this)
     })
   },
@@ -67,7 +88,7 @@ export const GistDisplayPage = React.createClass({
       <div className='gistDisplayPage'>
         <h1>Gist Manager</h1>
         <Logout />
-        <CreateGist />
+        <CreateGist createdGist={this.createdGist} />
         <GistList gistListData={this.state.gistListData} deleteHandler={this.deleteHandler} />
       </div>
     )

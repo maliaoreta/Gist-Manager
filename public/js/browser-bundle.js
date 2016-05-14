@@ -147,10 +147,31 @@
 	        'Authorization': 'token ' + localStorage.getItem('accessToken')
 	      },
 	      success: function () {
-	        console.log('Success!');
+	        console.log('Success Delete!');
+	        this.loadDataFromGithub();
 	      }.bind(this),
 	      error: function (xhr, status, err) {
 	        console.error(status, err.toString());
+	      }.bind(this)
+	    });
+	  },
+	  createdGist: function createdGist(data) {
+	    $.ajax({
+	      method: 'POST',
+	      url: 'https://api.github.com/gists',
+	      dataType: 'json',
+	      cache: false,
+	      headers: {
+	        'Content-Type': 'application/json',
+	        'Authorization': 'token ' + localStorage.getItem('accessToken')
+	      },
+	      data: JSON.stringify(data),
+	      success: function (data) {
+	        console.log('Success Create!');
+	        this.loadDataFromGithub();
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        console.error(xhr, status, err.toString());
 	      }.bind(this)
 	    });
 	  },
@@ -167,7 +188,7 @@
 	        'Gist Manager'
 	      ),
 	      React.createElement(_Logout.Logout, null),
-	      React.createElement(_CreateGist.CreateGist, null),
+	      React.createElement(_CreateGist.CreateGist, { createdGist: this.createdGist }),
 	      React.createElement(_GistList.GistList, { gistListData: this.state.gistListData, deleteHandler: this.deleteHandler })
 	    );
 	  }
@@ -13801,7 +13822,7 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'createGist' },
-	      this.state.createGistForm ? React.createElement(_CreateGistForm.CreateGistForm, null) : null,
+	      this.state.createGistForm ? React.createElement(_CreateGistForm.CreateGistForm, { createdGist: this.props.createdGist }) : null,
 	      this.state.createGistButton ? newGistButton : null
 	    );
 	  }
@@ -13816,12 +13837,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.CreateGistForm = undefined;
-	
-	var _GistItems = __webpack_require__(3);
-	
 	var React = __webpack_require__(4);
 	var $ = __webpack_require__(36);
+	
 	var CreateGistForm = exports.CreateGistForm = React.createClass({
 	  displayName: 'CreateGistForm',
 	  getInitialState: function getInitialState() {
@@ -13859,24 +13877,8 @@
 	      "files": files
 	    };
 	
-	    $.ajax({
-	      method: 'POST',
-	      url: 'https://api.github.com/gists',
-	      dataType: 'json',
-	      cache: false,
-	      headers: {
-	        'Content-Type': 'application/json',
-	        'Authorization': 'token ' + localStorage.getItem('accessToken')
-	      },
-	      data: JSON.stringify(data),
-	      success: function (data) {
-	        this.setState({ description: '', public: '', fileName: '', fileContent: '' });
-	        console.log('data: ', data);
-	      }.bind(this),
-	      error: function (xhr, status, err) {
-	        console.error(xhr, status, err.toString());
-	      }.bind(this)
-	    });
+	    this.setState({ description: '', public: '', fileName: '', fileContent: '' });
+	    this.props.createdGist(data);
 	  },
 	  render: function render() {
 	    return React.createElement(
