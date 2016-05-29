@@ -23,19 +23,21 @@ const usersGistsUrl = `https://api.github.com/users/${gistUsername}/gists`;
 export const GistDisplayPage = React.createClass({
   getInitialState: function () {
     return {
-      gistListData: [],
-      contentData: []
+      gistListData: []
     };
   },
   loadDataFromGithub: function () {
+    let content = [];
+
     this.helper().then((data) => {
       data.forEach((gist) => {
         this.loadGistContent(gist.url)
         .then((data) => {
-          console.log('data: ', data);
+          content.push(data);
+          this.setState({gistListData: content})
         })
       })
-    })
+    });
   },
   helper: function () {
     return new Promise((resolve, reject) => {
@@ -47,7 +49,8 @@ export const GistDisplayPage = React.createClass({
           'Authorization': `token ${userAccessToken}`
         },
         method: 'GET',
-        success: function (data) {     
+        success: function (data) {
+        console.log('data: ', data); 
           resolve(data);
         },
         error: function (xhr, status, err) {
@@ -67,6 +70,7 @@ export const GistDisplayPage = React.createClass({
         },
         method: 'GET',
         success: function (data) {
+          console.log('inside data: ', data);
           resolve(data);
         },
         error: function (xhr, status, err) {
