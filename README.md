@@ -5,6 +5,6 @@ A manager for all of your GitHub Gists. It allows you to read, delete, edit, and
 This project uses React, Express, and OAuth.
 
 ## How to run
-+ npm install
-+ run server with node/nodemon server.js
++ ```npm install```
++ ```node/nodemon server.js```
 + Navigate to localhost:8080 in browser
